@@ -25,7 +25,7 @@ namespace OptionPricer
 
         }
 
-        public double newton_vol(string option)
+        public double newton_vol(int psi)
         {
             double implied_vol = 0.1; //Suppose an initial 10% implied volatility.
             double ratio = (tol + 1); //so the while loop condition evaluates to true and condition passed.
@@ -39,28 +39,16 @@ namespace OptionPricer
                 double d_1 = ((Math.Log(spotPrice/strike) + (riskFree_rate - divi_yield + 0.5*Math.Pow(implied_vol,2))*days/days_in_year)/(implied_vol*Math.Sqrt(days/days_in_year)));
                 double d_2 = (d_1 - implied_vol*Math.Sqrt(days/days_in_year));
                 double vega = (spotPrice * Math.Pow(Math.E, -divi_yield * days / days_in_year) * Math.Sqrt(days / days_in_year) * Normal.PDF(0, 1, d_1));
-
-
-                if (option.ToUpper() == "PUT")
-                {
-                    double N_d1 = Normal.CDF(0, 1, -d_1);
-                    double N_d2 = Normal.CDF(0, 1, -d_2);
-                    double theo_price = -(spotPrice * Math.Pow(Math.E, -divi_yield * days / days_in_year) * N_d1 - strike * Math.Pow(Math.E, -riskFree_rate * days / days_in_year) * N_d2);
-                    price_err = theo_price - mkt_optionPrice; 
-                }
-                else if (option.ToUpper() == "CALL")
-                {
-                    double N_d1 = Normal.CDF(0, 1, d_1);
-                    double N_d2 = Normal.CDF(0, 1, d_2);
-                    double theo_price = (spotPrice * Math.Pow(Math.E, -divi_yield * days / days_in_year) * N_d1 - strike * Math.Pow(Math.E, -riskFree_rate * days / days_in_year) * N_d2);
-                    price_err = theo_price - mkt_optionPrice;
-                }
+                double N_d1 = Normal.CDF(0, 1, psi*d_1);
+                double N_d2 = Normal.CDF(0, 1, psi*d_2);
+                double theo_price = psi*(spotPrice * Math.Pow(Math.E, -divi_yield * days / days_in_year) * N_d1 - strike * Math.Pow(Math.E, -riskFree_rate * days / days_in_year) * N_d2);
+                price_err = theo_price - mkt_optionPrice;
 
                 ratio = price_err / vega;  //divide the price error by vega to increase the convergence rate.
                 implied_vol -= ratio;
             }
 
-            return Math.Round(implied_vol,5)*100;
+            return Math.Round(implied_vol*100,5);
         }
     }
 }

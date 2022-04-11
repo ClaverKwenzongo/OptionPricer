@@ -13,7 +13,7 @@ namespace OptionPricer
             CultureInfo culture = new CultureInfo("es-ES");
 
             //Table of results...
-            var table = new ConsoleTable("Shares", "Maturity Dates", "Strike Prices", "Number of Shares", "Option Prices", "Delta", "Gamma", "Vega", "Implied Volatility");
+            var table = new ConsoleTable("Shares", "Maturity Dates", "Strike Prices", "Number of Shares","Position", "Option Prices", "Delta", "Gamma", "Vega", "Implied Volatility");
 
             List<double> portfolio = new ();
 
@@ -29,14 +29,46 @@ namespace OptionPricer
 
             foreach (string ticker in user_list.Split(','))
             {
-                Console.WriteLine($"What is the striker price of {ticker}:");
+                Console.WriteLine($"What is the strike price of {ticker}:");
                 double op_strike = double.Parse(Console.ReadLine());
 
                 Console.WriteLine($"Option type of {ticker}:");
                 string user_op_type = Console.ReadLine();
 
+                //Check option type: Put - right to sell (-1), Call - right to buy (+1).
+                int psi;
+                if (user_op_type.ToUpper() == "PUT" )
+                {
+                    psi = -1;
+                }
+                else if (user_op_type.ToUpper() == "CALL" )
+                {
+                    psi = 1;
+                }
+                else
+                {
+                    throw new Exception("Enter either put or call for option type");
+                }
+
                 Console.WriteLine($"How many shares of {ticker}:");
                 double size = double.Parse(Console.ReadLine());
+
+                Console.WriteLine($"Enter the option position of {ticker} (long or short):");
+                string op_position = Console.ReadLine();
+
+                //check option position, for long position: buying (you are giving money to the seller). For short position: selling (you are getting money from the buyer)
+                if (op_position.ToUpper() == "LONG" )
+                {
+                    size = -size;
+                }
+                else if (op_position.ToUpper() == "SHORT")
+                {
+                    size = size;
+                }
+                else
+                {
+                    throw new Exception("Option position can only be long or short");
+                }
 
                 string user_ticker = ticker;
 
@@ -55,13 +87,12 @@ namespace OptionPricer
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
                 ///
 
-                var europeanOption = new EuropeanOption(user_ticker, op_strike, user_op_type.ToUpper(), days);
+                var europeanOption = new EuropeanOption(user_ticker, op_strike, psi, days);
 
                 double rf = 0;
                 double implied_vol = 0;
                 double div_yield = 0;
                 double _share_price = 0;
-                //double _size = 0;
                 double op = 0;
                 double del = 0;
                 double gam = 0;
@@ -70,12 +101,12 @@ namespace OptionPricer
 
                 if (ticker.ToUpper() == "RWX")
                 {
-                    Console.WriteLine("Enter the market option price:");
+                    Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
                     double mkt_option_price = double.Parse(Console.ReadLine());
 
                     var impliedVol = new ImpliedVol(mkt_option_price, op_strike, days, _share_price = 100, rf = 0.05, Math.Pow(10, -10), div_yield = 0);
 
-                    imp_vol = impliedVol.newton_vol(user_op_type);
+                    imp_vol = impliedVol.newton_vol(psi);
 
                     ///This is the test case.....
                     op = europeanOption.optionPrice(_share_price = 100, rf = 0.05, implied_vol = 0.2, div_yield = 0, size);
@@ -106,7 +137,7 @@ namespace OptionPricer
 
                     var impliedVol = new ImpliedVol(mkt_option_price, op_strike, days, _share_price, rf, Math.Pow(10, -10), div_yield);
 
-                    imp_vol = impliedVol.newton_vol(user_op_type);
+                    imp_vol = impliedVol.newton_vol(psi);
 
                     op = europeanOption.optionPrice(_share_price, rf, implied_vol, div_yield, size);
 
@@ -120,7 +151,7 @@ namespace OptionPricer
 
                 }
 
-                table.AddRow(ticker, _end_date, op_strike, size, op, del, veg, gam, imp_vol + " %");
+                table.AddRow(ticker, _end_date, op_strike, size,op_position, op, del, gam, veg, imp_vol + " %");
 
             }
 
