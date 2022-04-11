@@ -51,7 +51,7 @@ namespace OptionPricer
             {
                 throw new Exception("Option type can only be put or call.");
             }
-            return optionPrice;
+            return Math.Round(optionPrice,5);
         }
 
         public double sensitivity(double _SharePrice_, double _risk_free_, double _div_yield_, double _vol_, string greek_type)
@@ -86,7 +86,7 @@ namespace OptionPricer
 
             }
 
-            return greek;
+            return Math.Round(greek,5);
         }
 
     }

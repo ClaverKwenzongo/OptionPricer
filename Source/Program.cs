@@ -61,14 +61,14 @@ namespace OptionPricer
                 double implied_vol = 0;
                 double div_yield = 0;
                 double _share_price = 0;
-                double _size = 0;
+                //double _size = 0;
                 double op = 0;
                 double del = 0;
                 double gam = 0;
                 double veg = 0;
                 double imp_vol = 0;
 
-                if (user_ticker == "RWX")
+                if (ticker.ToUpper() == "RWX")
                 {
                     Console.WriteLine("Enter the market option price:");
                     double mkt_option_price = double.Parse(Console.ReadLine());
@@ -78,13 +78,15 @@ namespace OptionPricer
                     imp_vol = impliedVol.newton_vol(user_op_type);
 
                     ///This is the test case.....
-                    op = europeanOption.optionPrice(_share_price = 100, rf = 0.05, implied_vol = 0.2, div_yield = 0, _size = 1);
-                    del = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "delta");
-                    gam = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "gamma");
-                    veg = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "vega");
+                    op = europeanOption.optionPrice(_share_price = 100, rf = 0.05, implied_vol = 0.2, div_yield = 0, size);
 
                     //Add the calculated european call option price into the portfolio list for summation.
                     portfolio.Add(op);
+
+                    op = Math.Round(op / size,5);
+                    del = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "delta");
+                    gam = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "gamma");
+                    veg = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "vega");
                 }
                 else
                 {
@@ -107,12 +109,15 @@ namespace OptionPricer
                     imp_vol = impliedVol.newton_vol(user_op_type);
 
                     op = europeanOption.optionPrice(_share_price, rf, implied_vol, div_yield, size);
+
+                    //Add the calculated european call option price into the portfolio list for summation.
+                    portfolio.Add(op);
+
+                    op = Math.Round(op / size,5);
                     del = europeanOption.sensitivity(_share_price, rf, div_yield, implied_vol, "delta");
                     gam = europeanOption.sensitivity(_share_price, rf, div_yield, implied_vol, "gamma");
                     veg = europeanOption.sensitivity(_share_price, rf, div_yield, implied_vol, "vega");
 
-                    //Add the european option price calculated into the portfolio list for summation.
-                    portfolio.Add(op);
                 }
 
                 table.AddRow(ticker, _end_date, op_strike, size, op, del, veg, gam, imp_vol);
@@ -121,9 +126,11 @@ namespace OptionPricer
 
             table.Write();
 
-            double portfolio_value = portfolio.Sum();
+            double portfolio_value = Math.Round(portfolio.Sum(),2);
 
-            Console.WriteLine($"The value of your portfolio is R {portfolio_value}");
+            var val = string.Format("{0:N2}", portfolio_value);
+
+            Console.WriteLine($"The value of your portfolio is R {val}");
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }

@@ -61,7 +61,7 @@ namespace OptionPricer
                 implied_vol -= ratio;
             }
 
-            return implied_vol;
+            return Math.Round(implied_vol,5);
         }
     }
 }
