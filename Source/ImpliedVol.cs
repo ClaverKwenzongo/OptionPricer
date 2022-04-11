@@ -57,11 +57,10 @@ namespace OptionPricer
                 }
 
                 ratio = price_err / vega;  //divide the price error by vega to increase the convergence rate.
-                //Console.WriteLine($"Updated ratio {ratio}");
                 implied_vol -= ratio;
             }
 
-            return Math.Round(implied_vol,5);
+            return Math.Round(implied_vol,5)*100;
         }
     }
 }

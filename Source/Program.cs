@@ -120,7 +120,7 @@ namespace OptionPricer
 
                 }
 
-                table.AddRow(ticker, _end_date, op_strike, size, op, del, veg, gam, imp_vol);
+                table.AddRow(ticker, _end_date, op_strike, size, op, del, veg, gam, imp_vol + " %");
 
             }
 
