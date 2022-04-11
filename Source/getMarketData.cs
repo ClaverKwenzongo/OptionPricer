@@ -147,7 +147,8 @@ namespace OptionPricer
                         s_col = _col;
                         break;
                     }
-                    _col = _col + col_count;
+                    _col = _col + col_count; //Because the dividend yield and volatilities are all in the same excel sheet, we need to know where the data
+                    //for specific share entered by the user begins on the worksheet.
                 }
 
                 return s_col;
