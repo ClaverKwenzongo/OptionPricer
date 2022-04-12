@@ -82,7 +82,7 @@ namespace OptionPricer
                 ExcelPackage.LicenseContext = LicenseContext.Commercial;
 
                 //Change this file path...
-                var path = new FileInfo(@"C:\Users\ClaverKwenzongo\OneDrive - Riskworx Pty Ltd\Desktop\Demo\Market Data.xlsx");
+                var path = new FileInfo(@"C:\Users\ClaverKwenzongo\source\repos\OptionPricer\Market Data.xlsx");
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
                 ///
@@ -101,15 +101,17 @@ namespace OptionPricer
 
                 if (ticker.ToUpper() == "RWX")
                 {
-                    Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
-                    double mkt_option_price = double.Parse(Console.ReadLine());
+                    //Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
+                    //double mkt_option_price = double.Parse(Console.ReadLine());
+
+                    ///This is the test case.....
+                    op = europeanOption.optionPrice(_share_price = 100, rf = 0.05, implied_vol = 0.2, div_yield = 0, size);
+
+                    double mkt_option_price = op/size;
 
                     var impliedVol = new ImpliedVol(mkt_option_price, op_strike, days, _share_price = 100, rf = 0.05, Math.Pow(10, -10), div_yield = 0);
 
                     imp_vol = impliedVol.newton_vol(psi);
-
-                    ///This is the test case.....
-                    op = europeanOption.optionPrice(_share_price = 100, rf = 0.05, implied_vol = 0.2, div_yield = 0, size);
 
                     //Add the calculated european call option price into the portfolio list for summation.
                     portfolio.Add(op);
@@ -132,14 +134,16 @@ namespace OptionPricer
                         _share_price = marketData.SharePrice;
                     }
 
-                    Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
-                    long mkt_option_price = (long)double.Parse(Console.ReadLine());
+                    //Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
+                    //long mkt_option_price = (long)double.Parse(Console.ReadLine());
+
+                    op = europeanOption.optionPrice(_share_price, rf, implied_vol, div_yield, size);
+
+                    double mkt_option_price = op/size;
 
                     var impliedVol = new ImpliedVol(mkt_option_price, op_strike, days, _share_price, rf, Math.Pow(10, -10), div_yield);
 
                     imp_vol = impliedVol.newton_vol(psi);
-
-                    op = europeanOption.optionPrice(_share_price, rf, implied_vol, div_yield, size);
 
                     //Add the calculated european call option price into the portfolio list for summation.
                     portfolio.Add(op);

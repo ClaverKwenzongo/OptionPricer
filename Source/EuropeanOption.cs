@@ -33,7 +33,7 @@ namespace OptionPricer
             double N_d1 = Normal.CDF(0, 1, Psi * d_1);
             double N_d2 = Normal.CDF(0, 1, Psi * d_2);
             optionPrice = Psi * (SharePrice * Math.Pow(Math.E, -div_yield * TotalDays / days_in_year) * N_d1 - Strike * Math.Pow(Math.E, -risk_free * TotalDays / days_in_year) * N_d2);
-            optionPrice = size * optionPrice;
+            optionPrice = size * optionPrice; //We multiply by the size of the number of shares so we can calculate the value of the portfolio...
 
             return Math.Round(optionPrice,5);
         }
