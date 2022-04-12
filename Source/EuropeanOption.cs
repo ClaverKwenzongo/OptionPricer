@@ -46,7 +46,7 @@ namespace OptionPricer
 
             if (greek_type.ToUpper() == "DELTA")
             {
-                greek = Math.Pow(Math.E, -_div_yield_ * TotalDays / days_in_year) * Normal.CDF(0, 1, Psi*d_1);
+                greek = Psi*Math.Pow(Math.E, -_div_yield_ * TotalDays / days_in_year) * Normal.CDF(0, 1, Psi*d_1);
             }
             else if (greek_type.ToUpper() == "GAMMA")
             {

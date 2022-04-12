@@ -17,25 +17,19 @@ namespace OptionPricer
 
             List<double> portfolio = new ();
 
-            //Enter day of entry of option
-            Console.WriteLine("Enter option start date: dd/mm/yyyy");
-            String myStartDate = Console.ReadLine();
-            DateTime start_date = DateTime.Parse(myStartDate, culture);
-            var user_start_date = start_date.ToString("dd-MMM-yyyy");
+            List<string> start_dates = new List<string> { "30/03/2016", "30/03/2012", "30/03/2012", "30/03/2012" };
+            List<string> end_dates = new List<string> { "30/03/2017","26/09/2012", "28/06/2012", "25/12/2012" };
+            List<string> tickers = new List<string> {"rwx", "npn", "sol", "sab" };
+            List<double> strikes = new List<double> {100, 400, 385, 300 };
+            List<string> positions = new List<string> {"long","short", "long","short" };
+            List<string> optionTypes = new List<string> { "call", "put", "call", "put" };
 
-            Console.WriteLine("Portfolio shares separated by commas:");
-            string user_list = Console.ReadLine();
-            user_list.Split(',');
-
-            foreach (string ticker in user_list.Split(','))
+            foreach (string ticker in tickers)
             {
-                Console.WriteLine($"What is the strike price of {ticker}:");
-                double op_strike = double.Parse(Console.ReadLine());
+                double op_strike = strikes[tickers.IndexOf(ticker)];
 
-                Console.WriteLine($"Option type of {ticker}:");
-                string user_op_type = Console.ReadLine();
+                string user_op_type = optionTypes[tickers.IndexOf(ticker)];
 
-                //Check option type: Put - right to sell (-1), Call - right to buy (+1).
                 int psi;
                 if (user_op_type.ToUpper() == "PUT" )
                 {
@@ -50,11 +44,9 @@ namespace OptionPricer
                     throw new Exception("Enter either put or call for option type");
                 }
 
-                Console.WriteLine($"How many shares of {ticker}:");
-                double size = double.Parse(Console.ReadLine());
+                double size = 500000; //Suppose all the shares are equally sized.
 
-                Console.WriteLine($"Enter the option position of {ticker} (long or short):");
-                string op_position = Console.ReadLine();
+                string op_position = positions[tickers.IndexOf(ticker)];
 
                 if (op_position.ToUpper() == "LONG" )
                 {
@@ -71,9 +63,9 @@ namespace OptionPricer
 
                 string user_ticker = ticker;
 
-                Console.WriteLine($"What is the maturity date of {ticker}:");
-                string _end_date = Console.ReadLine();
-                DateTime end_date = DateTime.Parse(_end_date, culture);
+                DateTime end_date = DateTime.Parse(end_dates[tickers.IndexOf(ticker)], culture);
+                DateTime start_date = DateTime.Parse(start_dates[tickers.IndexOf(ticker)], culture);
+                var user_start_date = start_date.ToString("dd-MMM-yyyy");
 
                 TimeSpan interval = end_date - start_date;
                 double days = (double)interval.TotalDays;
@@ -100,10 +92,9 @@ namespace OptionPricer
 
                 if (ticker.ToUpper() == "RWX")
                 {
-                    //Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
-                    //double mkt_option_price = double.Parse(Console.ReadLine());
 
                     ///This is the test case.....
+
                     op = europeanOption.optionPrice(_share_price = 100, rf = 0.05, implied_vol = 0.2, div_yield = 0, size);
 
                     double mkt_option_price = op/size;
@@ -112,8 +103,7 @@ namespace OptionPricer
 
                     imp_vol = impliedVol.newton_vol(psi);
 
-                    //Add the calculated european call option price into the portfolio list for summation.
-                    portfolio.Add(op);
+                    //We dont have to add this in the calculation of the portfolio value since it is a made up share.
 
                     op = Math.Round(op / size,5);
                     del = europeanOption.sensitivity(_share_price = 100, rf = 0.05, div_yield = 0, implied_vol = 0.2, "delta");
@@ -133,8 +123,6 @@ namespace OptionPricer
                         _share_price = marketData.SharePrice;
                     }
 
-                    //Console.WriteLine($"To calculate the implied volatility enter the market price of {ticker} option:");
-                    //long mkt_option_price = (long)double.Parse(Console.ReadLine());
 
                     op = europeanOption.optionPrice(_share_price, rf, implied_vol, div_yield, size);
 
@@ -154,7 +142,7 @@ namespace OptionPricer
 
                 }
 
-                table.AddRow(ticker, _end_date, op_strike, size,op_position, op, del, gam, veg, imp_vol + " %");
+                table.AddRow(ticker, end_dates[tickers.IndexOf(ticker)], op_strike, size,op_position, op, del, gam, veg, imp_vol + " %");
 
             }
 
