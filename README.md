@@ -1,6 +1,8 @@
 # OptionPricer
 
-# This program is a console app.
+# This program is a console app. 
+
+The code is hard coded for specific shares: rwx, npn, sol and sab.
 
 Packages to install:
 - epplus: for the excel loader function
