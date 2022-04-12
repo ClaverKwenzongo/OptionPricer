@@ -56,14 +56,13 @@ namespace OptionPricer
                 Console.WriteLine($"Enter the option position of {ticker} (long or short):");
                 string op_position = Console.ReadLine();
 
-                //check option position, for long position: buying (you are giving money to the seller). For short position: selling (you are getting money from the buyer)
                 if (op_position.ToUpper() == "LONG" )
                 {
-                    size = -size;
+                    size = size;
                 }
                 else if (op_position.ToUpper() == "SHORT")
                 {
-                    size = size;
+                    size = -size;
                 }
                 else
                 {
